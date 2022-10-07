@@ -1,18 +1,18 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: psmdbtemplate-dbaas
+  name: xpxcdbtemplates.pxc.dbaas.percona.com
   labels:
-    crossplane.io/xrd: xpsmdbtemplates.psmdb.dbaas.percona.com
-    engine: psmdb
+    crossplane.io/xrd: xpxcdbtemplates.pxc.dbaas.percona.com
+    engine: pxc
 
 spec:
 
   writeConnectionSecretsToNamespace: crossplane-system
 
   compositeTypeRef:
-    apiVersion: psmdb.dbaas.percona.com/v1alpha1
-    kind: XPSMDBtemplate
+    apiVersion: pxc.dbaas.percona.com/v1alpha1
+    kind: XPXCDBtemplate
 
   resources:
   - name: configmap

@@ -1,10 +1,10 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: dbtemplate-dbaas
+  name: dbtemplate.pxc.dbaas.percona.com
   labels:
     crossplane.io/xrd: xdbtemplates.dbaas.percona.com
-    engine: psmdb
+    engine: pxc
 
 spec:
 
@@ -15,50 +15,40 @@ spec:
     kind: XDBtemplate
 
   resources:
-  - name: PSMDBTemplate
+  - name: PXCDBTemplate
     base:
       apiVersion: kubernetes.crossplane.io/v1alpha1
       kind: Object
       spec:
         forProvider:
           manifest:
-            apiVersion: psmdb.dbaas.percona.com/v1alpha1
-            kind: PSMDBtemplate
+            apiVersion: pxc.dbaas.percona.com/v1alpha1
+            kind: PXCDBtemplate
             metadata:
-              name: psmdb-default-template
+              name: pxc-default-template
               namespace: default
             spec:
-              crVersion: 1.13.0
-              image: percona/percona-server-mongodb:5.0.11-10
+              crVersion: 1.11.0
+              secretsName: minimal-cluster-secrets
               allowUnsafeConfigurations: true
               upgradeOptions:
-                apply: disabled
-                schedule: "0 2 * * *"
-              secrets:
-                users: minimal-cluster
-              replsets:
-
-              - name: rs0
+                apply: 8.0-recommended
+                schedule: "0 4 * * *"
+              pxc:
                 size: 1
+                image: percona/percona-xtradb-cluster:8.0.27-18.1
                 volumeSpec:
                   persistentVolumeClaim:
                     resources:
                       requests:
-                        storage: 3Gi
-
-              sharding:
+                        storage: 6G
+              haproxy:
                 enabled: true
-
-                configsvrReplSet:
-                  size: 1
-                  volumeSpec:
-                    persistentVolumeClaim:
-                      resources:
-                        requests:
-                          storage: 3Gi
-
-                mongos:
-                  size: 1
+                size: 1
+                image: percona/percona-xtradb-cluster-operator:1.11.0-haproxy
+              logcollector:
+                enabled: true
+                image: percona/percona-xtradb-cluster-operator:1.11.0-logcollector
         providerConfigRef:
           name: kubernetes-provider
     patches:

@@ -1,7 +1,7 @@
 apiVersion: meta.pkg.crossplane.io/v1
 kind: Configuration
 metadata:
-  name: dbaas-platform-eks
+  name: dbaas-platform
 spec:
   crossplane:
     version: ">=v1.9.1"
