@@ -13,9 +13,9 @@ kubectl get namespace crossplane-system || \
     kubectl create namespace crossplane-system 
 
 helm status --namespace crossplane-system crossplane || \
-    helm install crossplane --namespace crossplane-system \
+    helm install crossplane --wait --namespace crossplane-system \
         crossplane-stable/crossplane \
-        --set provider.packages=\{crossplane/provider-aws:v0.32.0,crossplane/provider-helm:master,crossplane/provider-kubernetes:main\}
+        --set provider.packages=\{crossplane/provider-aws:v0.32.0,crossplane/provider-helm:v0.11.1,crossplane/provider-kubernetes:v0.4.1\}
 
 echo
 echo "########## waiting for Crossplane to deploy"
@@ -84,7 +84,7 @@ EOF
 
 echo
 echo "########## wait for pmm"
-kubectl wait --for=condition=Ready release.helm.crossplane.io/pmm
+kubectl wait --for=condition=Ready release.helm.crossplane.io/pmm --timeout=2m
 kubectl wait --for=condition=Ready pod --selector=app.kubernetes.io/name=pmm
 
 export NODE_PORT=$(kubectl get service -o jsonpath="{.spec.ports[0].nodePort}" monitoring-service)

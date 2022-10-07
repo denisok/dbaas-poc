@@ -8,3 +8,7 @@ spec:
   dependsOn:
     - provider: crossplane/provider-aws
       version: ">=v0.32.0"
+    - provider: crossplane/provider-helm
+      version: ">=v0.11.1"
+    - provider: crossplane/provider-kubernetes
+      version: ">=v0.4.1"
