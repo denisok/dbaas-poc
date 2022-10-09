@@ -1,0 +1,29 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xdbclaims.dbaas.percona.com
+spec:
+  group: dbaas.percona.com
+  names:
+    kind: XDBclaim
+    plural: xdbclaims
+  claimNames:
+    kind: DBclaim
+    plural: dbclaims
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              name:
+                type: string
+          status:
+            type: object
+            properties:
+              TemplateName:
+                description: The name of the template
+                type: string

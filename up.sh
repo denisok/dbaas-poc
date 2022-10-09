@@ -4,7 +4,8 @@ set -e
 
 echo "########## starting minikube"
 
-minikube status || minikube start
+minikube status || minikube start 
+#--nodes=5 --cpus=3 --memory=4G
 
 echo
 echo "########## installing crossplane with providers"
@@ -56,6 +57,12 @@ spec:
 EOF
 
 echo
+echo "########## deploy dbaas platform"
+kubectl get configuration.pkg.crossplane.io/denisok-dbaas-platform || \
+  kubectl crossplane install configuration ghcr.io/denisok/dbaas-platform:v0.0.9
+kubectl wait --for=condition=Healthy configuration.pkg.crossplane.io/denisok-dbaas-platform --timeout=2m
+
+echo
 echo "########## deploy pmm"
 
 cat <<EOF | kubectl apply -f -
@@ -85,7 +92,7 @@ EOF
 echo
 echo "########## wait for pmm"
 kubectl wait --for=condition=Ready release.helm.crossplane.io/pmm --timeout=2m
-kubectl wait --for=condition=Ready pod --selector=app.kubernetes.io/name=pmm
+kubectl wait --for=condition=Ready pod --selector=app.kubernetes.io/name=pmm --timeout=3m
 
 export NODE_PORT=$(kubectl get service -o jsonpath="{.spec.ports[0].nodePort}" monitoring-service)
 export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")

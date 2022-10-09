@@ -1,0 +1,19 @@
+apiVersion: dbaas.percona.com/v1alpha1
+kind: DBclaim
+metadata:
+  name: psm-db-1
+spec:
+  name: psm-db-1
+  compositionSelector:
+    matchLabels:
+      engine: psmdb
+---
+apiVersion: dbaas.percona.com/v1alpha1
+kind: DBclaim
+metadata:
+  name: pxc-db-1
+spec:
+  name: pxc-db-1
+  compositionSelector:
+    matchLabels:
+      engine: pxc

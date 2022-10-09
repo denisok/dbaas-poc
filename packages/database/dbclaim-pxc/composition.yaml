@@ -1,0 +1,60 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: dbclaim.dbaas.percona.com
+  labels:
+    crossplane.io/xrd: xdbclaims.dbaas.percona.com
+    engine: pxc
+
+spec:
+
+  writeConnectionSecretsToNamespace: crossplane-system
+
+  compositeTypeRef:
+    apiVersion: dbaas.percona.com/v1alpha1
+    kind: XDBclaim
+
+  resources:
+  - name: CR
+    base:
+      apiVersion: kubernetes.crossplane.io/v1alpha1
+      kind: Object
+      spec:
+        forProvider:
+          manifest:
+            apiVersion: pxc.percona.com/v1-11-0
+            kind: PerconaXtraDBCluster
+            metadata:
+              name: pxc-default-template
+              namespace: default
+            spec:
+              crVersion: 1.11.0
+              secretsName: minimal-cluster-secrets
+              allowUnsafeConfigurations: true
+              upgradeOptions:
+                apply: 8.0-recommended
+                schedule: "0 4 * * *"
+              pxc:
+                size: 1
+                image: percona/percona-xtradb-cluster:8.0.27-18.1
+                volumeSpec:
+                  persistentVolumeClaim:
+                    resources:
+                      requests:
+                        storage: 6G
+              haproxy:
+                enabled: true
+                size: 1
+                image: percona/percona-xtradb-cluster-operator:1.11.0-haproxy
+              logcollector:
+                enabled: true
+                image: percona/percona-xtradb-cluster-operator:1.11.0-logcollector
+        providerConfigRef:
+          name: kubernetes-provider
+    patches:
+    - fromFieldPath: spec.name
+      toFieldPath: spec.forProvider.manifest.metadata.name
+    - fromFieldPath: spec.name
+      toFieldPath: status.TemplateName
+    readinessChecks:
+    - type: None
