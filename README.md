@@ -17,7 +17,23 @@ kubectl crossplane push configuration ghcr.io/denisok/dbaas-platform:v0.0.12
 Setup and Install: [script that deploys it in minikube](./up.sh)
 
 Use: `kubectl apply -f DBClaim.yaml`
-Check out `DBClaim.yaml` to see how you can use the claim
+
+Check out `DBClaim.yaml` to see how you can use the claim:
+```yaml
+apiVersion: dbaas.percona.com/v1alpha1
+kind: DBclaim
+metadata:
+  name: psm-db-1
+spec:
+  compositionSelector:
+    matchLabels:
+      engine: psmdb
+      storage: default
+      network: default
+  clusterSize: 1
+  engineVersion: ""
+  engineConfig: ""
+```
 
 ## Troubleshoot:
 
