@@ -59,9 +59,9 @@ EOF
 echo
 echo "########## deploy dbaas platform"
 kubectl get configuration.pkg.crossplane.io/denisok-dbaas-platform || \
-  kubectl crossplane install configuration ghcr.io/denisok/dbaas-platform:v0.0.9
+  kubectl crossplane install configuration ghcr.io/denisok/dbaas-platform:v0.0.12
 kubectl wait --for=condition=Healthy configuration.pkg.crossplane.io/denisok-dbaas-platform --timeout=2m
-
+exit 0
 echo
 echo "########## deploy pmm"
 
@@ -102,4 +102,3 @@ echo
 echo "########## Your DBaaS is ready!"
 echo "https://$NODE_IP:$NODE_PORT/graph/dbaas/dbclusters"
 echo "password:$PMM_PASS"
-

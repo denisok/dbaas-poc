@@ -1,10 +1,12 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: dbclaim.dbaas.percona.com
+  name: dbclaim.pxc.dbaas.percona.com
   labels:
     crossplane.io/xrd: xdbclaims.dbaas.percona.com
     engine: pxc
+    storage: default
+    network: default
 
 spec:
 
@@ -52,9 +54,9 @@ spec:
         providerConfigRef:
           name: kubernetes-provider
     patches:
-    - fromFieldPath: spec.name
+    - fromFieldPath: metadata.name
       toFieldPath: spec.forProvider.manifest.metadata.name
-    - fromFieldPath: spec.name
-      toFieldPath: status.TemplateName
+    - fromFieldPath: spec.clusterSize
+      toFieldPath: spec.forProvider.manifest.spec.pxc.size
     readinessChecks:
     - type: None
